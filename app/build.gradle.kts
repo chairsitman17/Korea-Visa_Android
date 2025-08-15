@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "kr.theKAdministrativeAgency.koreaVisa"
+    namespace = "biz.theK.koreaVisa"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "kr.theKAdministrativeAgency.koreaVisa"
+        applicationId = "biz.theK.koreaVisa"
         minSdk = 29
         targetSdk = 35
         versionCode = 1

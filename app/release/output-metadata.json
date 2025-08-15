@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "kr.theKAdministrativeAgency.koreaVisa",
+  "applicationId": "biz.theK.koreaVisa",
   "variantName": "release",
   "elements": [
     {

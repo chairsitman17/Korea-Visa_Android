@@ -1,4 +1,4 @@
-package kr.theKAdministrativeAgency.koreaVisa
+package biz.theK.koreaVisa
 
 import org.junit.Test
 
