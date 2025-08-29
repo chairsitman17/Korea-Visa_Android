@@ -300,6 +300,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        webView.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView.onResume()
+    }
+
     override fun onBackPressed() {
         if (webView.canGoBack()) {
             webView.goBack()
