@@ -42,6 +42,10 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var connectionErrorDialog: AlertDialog? = null
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    // 허용된 도메인 목록
+    private val allowedDomains = listOf(
+        "korea-visa.kr",
+    )
 
     // 사용자의 권한 설정 수신 받기
     private val requestNotificationPermissionLauncher = registerForActivityResult(
@@ -53,13 +57,43 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * URL 검증 함수
+     * - javascript:, file:, data: 등의 위험한 스킴 차단
+     * - 허용된 도메인만 접근 가능
+     */
+    private fun isValidUrl(url: String): Boolean {
+        return try {
+            val uri = Uri.parse(url)
+            val scheme = uri.scheme?.lowercase()
+            val host = uri.host?.lowercase()
+
+            // 허용된 스킴만 통과 (https, http)
+            if (scheme != "https") {
+                return false
+            }
+
+            // 허용된 도메인 체크
+            host != null && allowedDomains.any { allowedDomain ->
+                host == allowedDomain || host.endsWith(".$allowedDomain")
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "URL validation error", e)
+            false
+        }
+    }
+
     // 사용자가 앱이 켜진 상태에서 알림을 클릭했을때, WebView에서 업데이트하기
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        val url = intent.getStringExtra("url")
-        if (!url.isNullOrEmpty()) {
-            webView.loadUrl(url)
+        // 외부에서 오는 url을 확인하고 webView에 로드하기 (교차 앱 스크립팅 취약점 수정)
+        intent.getStringExtra("url")?.let { url ->
+            if (isValidUrl(url)) {
+                webView.loadUrl(url)
+            } else {
+                Log.w("MainActivity", "Invalid or unauthorized URL blocked: $url")
+            }
         }
     }
 
@@ -242,7 +276,8 @@ class MainActivity : ComponentActivity() {
         }
 
         // 웹 페이지 로드
-        webView.loadUrl("https://korea-visa.kr")
+        val url = "https://korea-visa.kr"
+        webView.loadUrl(url)
         webView.webViewClient = object : WebViewClient() {
             // 로딩 중일 때 ProgressBar 띄우기
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -280,7 +315,13 @@ class MainActivity : ComponentActivity() {
 
         // 앱이 꺼진 상태에서 알림을 클릭했을 경우
         // WebView가 완전히 로딩이 완료되었을 때, 알림의 payload에 있는 url로 이동하게 하기
-        intent.getStringExtra("url")?.let { webView.loadUrl(it) }
+        intent.getStringExtra("url")?.let { url ->
+            if (isValidUrl(url)) {
+                webView.loadUrl(url)
+            } else {
+                Log.w("MainActivity", "Invalid or unauthorized URL blocked: $url")
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
