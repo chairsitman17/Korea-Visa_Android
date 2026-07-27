@@ -45,6 +45,8 @@ class MainActivity : ComponentActivity() {
     // 허용된 도메인 목록
     private val allowedDomains = listOf(
         "korea-visa.kr",
+        "payment-gateway-sandbox.tosspayments.com",
+        "payment-gateway.tosspayments.com"
     )
 
     // 사용자의 권한 설정 수신 받기
@@ -233,7 +235,7 @@ class MainActivity : ComponentActivity() {
         webView = findViewById(R.id.webview)
         webView.webViewClient = WebViewClient()
         webView.settings.javaScriptEnabled = true
-        webView.settings.userAgentString = "K-VisaApp_Android"
+        webView.settings.userAgentString = "${webView.settings.userAgentString} K-VisaApp_Android"
         webView.settings.domStorageEnabled = true
         webView.settings.textZoom = 100
         webView.settings.allowFileAccess = true

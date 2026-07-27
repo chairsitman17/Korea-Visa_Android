@@ -1,3 +1,11 @@
+import java.util.Properties
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -12,16 +20,16 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            keyAlias = "biz.thek.koreavisa"
-            keyPassword = System.getenv("RELEASE_KEY_PASSWORD") ?: project.findProperty("RELEASE_KEY_PASSWORD") as String? ?: ""
+            keyAlias = "biz.theK.koreaVisa"
+            keyPassword = localProperties.getProperty("RELEASE_KEY_PASSWORD")
             storeFile = file("../keystore/debug.keystore")
-            storePassword = System.getenv("RELEASE_STORE_PASSWORD") ?: project.findProperty("RELEASE_STORE_PASSWORD") as String? ?: ""
+            storePassword = localProperties.getProperty("RELEASE_KEY_PASSWORD")
         }
         register("release") {
-            keyAlias = "biz.thek.koreavisa"
-            keyPassword = System.getenv("RELEASE_KEY_PASSWORD") ?: project.findProperty("RELEASE_KEY_PASSWORD") as String? ?: ""
+            keyAlias = "biz.theK.koreaVisa"
+            keyPassword = localProperties.getProperty("RELEASE_KEY_PASSWORD")
             storeFile = file("../keystore/release.keystore")
-            storePassword = System.getenv("RELEASE_STORE_PASSWORD") ?: project.findProperty("RELEASE_STORE_PASSWORD") as String? ?: ""
+            storePassword = localProperties.getProperty("RELEASE_KEY_PASSWORD")
         }
     }
 
@@ -29,8 +37,8 @@ android {
         applicationId = "biz.theK.koreaVisa"
         minSdk = 29
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.4"
+        versionCode = 5
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
